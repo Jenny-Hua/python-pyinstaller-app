@@ -1,14 +1,11 @@
+// Example of Jenkins pipeline script
 pipeline {
     agent none
     stages {
         stage('Build') {
-            agent {
-                docker {
-                    image 'python:2-alpine'
-                }
-            }
             steps {
-                sh 'python -m py_compile sources/add2vals.py sources/calc.py'
+                echo "Iniciando Pipeline!"
+                sh 'python3 -m py_compile sources/add2vals.py sources/calc.py'
             }
         }
         stage('Test') {
@@ -18,7 +15,8 @@ pipeline {
                 }
             }
             steps {
-                sh 'py.test --verbose --junit-xml test-reports/results.xml sources/test_calc.py'
+                echo "Iniciando Tests!"
+                sh 'pytest --verbose --junit-xml test-reports/results.xml sources/test_calc.py'
             }
             post {
                 always {
@@ -27,12 +25,8 @@ pipeline {
             }
         }
         stage('Deliver') {
-            agent {
-                docker {
-                    image 'cdrx/pyinstaller-linux:python2'
-                }
-            }
             steps {
+                echo "Iniciando Deliver!"
                 sh 'pyinstaller --onefile sources/add2vals.py'
             }
             post {
